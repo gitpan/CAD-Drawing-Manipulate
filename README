@@ -1,0 +1,188 @@
+NAME
+    CAD::Drawing::Manipulate - Manipulate CAD::Drawing objects
+
+Description
+    Move, Copy, Scale, Mirror, and Rotate methods for single entities and
+    groups of entities.
+
+AUTHOR
+      Eric L. Wilhelm
+      ewilhelm at sbcglobal dot net
+      http://pages.sbcglobal.net/mycroft
+
+COPYRIGHT
+    This module is copyright (C) 2003 by Eric L. Wilhelm and A. Zahner Co.
+
+LICENSE
+    This module is distributed under the same terms as Perl. See the Perl
+    source package for details.
+
+    You may use this software under one of the following licenses:
+
+      (1) GNU General Public License
+        (found at http://www.gnu.org/copyleft/gpl.html)
+      (2) Artistic License
+        (found at http://www.perl.com/pub/language/misc/Artistic.html)
+
+NO WARRANTY
+    This software is distributed with ABSOLUTELY NO WARRANTY. The author and
+    his employer will in no way be held liable for any loss or damages
+    resulting from its use.
+
+Modifications
+    The source code of this module is made freely available and
+    distributable under the GPL or Artistic License. Modifications to and
+    use of this software must adhere to one of these licenses. Changes to
+    the code should be noted as such and this notification (as well as the
+    above copyright information) must remain intact on all copies of the
+    code.
+
+    Additionally, while the author is actively developing this code,
+    notification of any intended changes or extensions would be most helpful
+    in avoiding repeated work for all parties involved. Please contact the
+    author with any such development plans.
+
+Changes
+      0.10 First public release
+      0.11 Minor changes
+
+Group Methods
+    These methods are called with required values, followed by a hash
+    reference of option values. Note the difference between this and the
+    individual entity manipulation syntax shown below. The absence of an
+    \%options hash reference implies everything in the drawing.
+
+    For details about each of the group manipulation methods, see the
+    corresponding individual entity manipulation method.
+
+  Options
+
+    The $opts value shown for each of the group manipulation methods is fed
+    directly to CAD::Drawing::select_addr(). See the documentation for this
+    function for additional details.
+
+    One of the most common methods of selection (after the implicit all) may
+    be the explicit list of addresses. This is done by simply passing an
+    array reference rather than a hash reference.
+
+  GroupMove
+
+    Move selected entities by @dist.
+
+      $drw->GroupMove(\@dist, $opts);
+
+  GroupCopy
+
+    Returns a list of addresses for newly created entities.
+
+      @new = $drw->GroupCopy(\@dist, $opts);
+
+  GroupClone
+
+    Returns a list of addresses for newly created entities.
+
+      @new = $drw->GroupClone($dest, $opts);
+
+  place
+
+    Clones items from $source into $drw and moves them to @pt. Selects items
+    according to %opts and optionally rotates them by $opts{ang} (given in
+    radians.)
+
+      $drw->place($source, \@pt, \%opts);
+
+  GroupMirror
+
+    Mirrors the entities specified by %options (see select_addr()) across
+    @axis.
+
+      @new = $drw->GroupMirror(\@axis, \%options);
+
+  GroupScale
+
+    Sorry, \@pt is required here.
+
+      $drw->GroupScale($factor, \@pt, \%opts);
+
+  GroupRotate
+
+    Rotates specified entities by $angle. A center point may be specified
+    via $opts{pt} = \@pt.
+
+      $drw->GroupRotate($angle, \%opts);
+
+Individual Methods
+  Move
+
+    Moves entity at $addr by @dist (@dist may be three-dimensional.)
+
+      $drw->Move($addr, \@dist);
+
+  Copy
+
+      $drw->Copy($addr, \@dist);
+
+  Clone
+
+    Clones the entity at $addr into drawing $dest.
+
+      $drw->Clone($addr, $dest, \%opts);
+
+    %opts may contain:
+
+      to_layer => $layer_name,  # layer to clone into
+
+  Mirror
+
+    Mirrors entity specified by $addr across @axis.
+
+    Returns the address of the manipulated entity. If $opts{copy} is true,
+    will clone the entity, otherwise modify in-place.
+
+      $drw->Mirror($addr, \@axis, \%opts);
+
+  Scale
+
+      $drw->Scale($addr, $factor, \@pt);
+
+  Rotate
+
+    Rotates entity specified by $addr by $angle (+ccw radians) about @pt.
+    Angle may be in degrees if $angle =~ s/d$// returns a true value (but I
+    hope the "d" is the only thing on the end, because I'm not looking for
+    anything beyond that.) $angle = "45" . "d" will get converted, but
+    $angle = "45" . "bad" will be called 0. Remember, this is Perl:)
+
+      $drw->Rotate($addr, $angle, \@pt);
+
+Internal Functions
+  pointrotate
+
+    Internal use only.
+
+      ($x, $y) = pointrotate($x, $y, $ang, $xc, $yc);
+
+  pointmirror
+
+      @point = pointmirror($axis, $pt);
+
+  angle_of
+
+      angle_of(\@segment);
+
+Polygon Methods
+    These don't do anything yet and need to be moved to another module
+    anyway.
+
+  CutPline
+
+      $drw->CutPline();
+
+  IntPline
+
+      $drw->IntPline();
+
+  intersect_pgon
+
+      intersect_pgon();
+
